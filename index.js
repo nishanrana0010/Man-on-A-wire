@@ -7,13 +7,18 @@ const canvasHeight = canvas.height;
 const wireXPositions = [150, 300, 450, 600];
 const wireCount = wireXPositions.length;
 
+const gameOverMusic = new Audio(
+  "aeests/sounds/TunePocket-Funny-Fail-Game-Over-Preview.mp3"
+); // Replace with your game over music path
+gameOverMusic.volume = 0.02;
+
 const backgroundImage = new Image();
 backgroundImage.src = "aeests/images/ground.png"; // Replace with your background image path
 
 const bugImage = new Image();
 bugImage.src = "aeests/images/pokemon-removebg-preview.png"; // Replace with your bug GIF image path
 
-const jumpSound = new Audio('aeests/sounds/cartoon-jump-6462.mp3');
+const jumpSound = new Audio("aeests/sounds/cartoon-jump-6462.mp3");
 
 const spriteSheetWidth = 256;
 const spriteSheetHeight = 57;
@@ -24,7 +29,7 @@ let bugCurrentFrame = 0;
 let frameCount = 0;
 
 let bug = {
-  x: wireXPositions[0]-25, // Initial position of the bug on the wire
+  x: wireXPositions[0] - 25, // Initial position of the bug on the wire
   y: canvasHeight - 90,
   width: 70,
   height: 65,
@@ -250,7 +255,14 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 
 function drawStartMenu() {
   ctx.fillStyle = "lightblue";
-  drawRoundedRect(ctx, canvasWidth / 4 - 14, canvasHeight / 2 - 45, 340, 120, 20);
+  drawRoundedRect(
+    ctx,
+    canvasWidth / 4 - 14,
+    canvasHeight / 2 - 45,
+    340,
+    120,
+    20
+  );
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
   ctx.fillText("Press Space to Start", canvasWidth / 4, canvasHeight / 2);
@@ -278,50 +290,81 @@ function gameLoop() {
     }
   } else if (gameState === GAME_STATE_OVER) {
     ctx.fillStyle = "lightblue";
-    drawRoundedRect(ctx, canvasWidth / 4 - 14, canvasHeight / 2 - 45, 340, 120, 20);
+    drawRoundedRect(
+      ctx,
+      canvasWidth / 4 - 14,
+      canvasHeight / 2 - 45,
+      340,
+      120,
+      20
+    );
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
-    ctx.fillText(`Game Over! Score: ${score}`, canvasWidth / 4, canvasHeight / 2);
-    ctx.fillText("Press Space to Restart", canvasWidth / 4, canvasHeight / 2 + 40);
+    ctx.fillText(
+      `Game Over! Score: ${score}`,
+      canvasWidth / 4,
+      canvasHeight / 2
+    );
+    ctx.fillText(
+      "Press Space to Restart",
+      canvasWidth / 4,
+      canvasHeight / 2 + 40
+    );
+
+    // Play game over music if it's not already playing
+    if (gameOverMusic.paused) {
+      gameOverMusic.play().catch((error) => {
+        console.error("Error playing game over music:", error);
+      });
+    }
   }
 
   requestAnimationFrame(gameLoop);
 }
 
-if(score<=50)
-{
-setInterval(createObstacle, 600);
+if (score <= 50) {
+  setInterval(createObstacle, 600);
+} else if (score > 50) {
+  drawLevelMessage();
+  setInterval(createObstacle, 200);
 }
- else if (score > 50) {
-      drawLevelMessage();
-setInterval(createObstacle, 200);
-    }
-    if (score > 100) {
-      drawLevel3Message();
-setInterval(createObstacle, 100);
-    }
-
+if (score > 100) {
+  drawLevel3Message();
+  setInterval(createObstacle, 100);
+}
 
 document.addEventListener("keydown", (event) => {
-  if (event.code === "ArrowLeft" && bug.wireIndex > 0 && gameState === GAME_STATE_RUNNING) {
+  if (
+    event.code === "ArrowLeft" &&
+    bug.wireIndex > 0 &&
+    gameState === GAME_STATE_RUNNING
+  ) {
     bug.wireIndex -= 1;
     bug.x = wireXPositions[bug.wireIndex] - 20;
     jumpSound.currentTime = 0; // Reset sound to start
-    jumpSound.play().catch(error => {
+    jumpSound.play().catch((error) => {
       console.error("Error playing jump sound:", error);
     });
-  } else if (event.code === "ArrowRight" && bug.wireIndex < wireCount - 1 && gameState === GAME_STATE_RUNNING) {
+  } else if (
+    event.code === "ArrowRight" &&
+    bug.wireIndex < wireCount - 1 &&
+    gameState === GAME_STATE_RUNNING
+  ) {
     bug.wireIndex += 1;
     bug.x = wireXPositions[bug.wireIndex] - 20;
     jumpSound.currentTime = 0; // Reset sound to start
-    jumpSound.play().catch(error => {
+    jumpSound.play().catch((error) => {
       console.error("Error playing jump sound:", error);
     });
-  } else if (event.code === "ArrowUp" && !bug.jumping && gameState === GAME_STATE_RUNNING) {
+  } else if (
+    event.code === "ArrowUp" &&
+    !bug.jumping &&
+    gameState === GAME_STATE_RUNNING
+  ) {
     bug.jumping = true;
     bug.jumpSpeed = 15; // Initial jump speed
     jumpSound.currentTime = 0; // Reset sound to start
-    jumpSound.play().catch(error => {
+    jumpSound.play().catch((error) => {
       console.error("Error playing jump sound:", error);
     });
   } else if (event.code === "Space") {

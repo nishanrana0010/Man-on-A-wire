@@ -9,8 +9,8 @@ const wireCount = wireXPositions.length;
 
 const gameOverMusic = new Audio(
   "aeests/sounds/TunePocket-Funny-Fail-Game-Over-Preview.mp3"
-); // Replace with your game over music path
-gameOverMusic.volume = 0.02;
+);                                                              // Replace with your game over music path
+gameOverMusic.volume = 0.5;
 
 const backgroundImage = new Image();
 backgroundImage.src = "aeests/images/ground.png"; // Replace with your background image path
@@ -19,6 +19,9 @@ const bugImage = new Image();
 bugImage.src = "aeests/images/pokemon-removebg-preview.png"; // Replace with your bug GIF image path
 
 const jumpSound = new Audio("aeests/sounds/cartoon-jump-6462.mp3");
+jumpSound.volume=0.5;
+
+
 
 const spriteSheetWidth = 256;
 const spriteSheetHeight = 57;
@@ -52,7 +55,7 @@ let gameOver = false;
 let obstacleSpeed = 5;
 
 let backgroundMusic = document.getElementById("backgroundMusic");
-backgroundMusic.volume = 0.05;
+backgroundMusic.volume = 0.2;
 
 // Game state variables
 const GAME_STATE_START = "start";
@@ -76,14 +79,17 @@ function startBackgroundMusic() {
   backgroundMusic.play();
 }
 
+
 function stopBackgroundMusic() {
   backgroundMusic.pause();
   backgroundMusic.currentTime = 0; // Reset the music to the beginning
 }
 
-bugImage.onload = imageLoaded;
+bugImage.onload = imageLoaded; //bugImage call function imageLoaded after it is finished loading
 backgroundImage.onload = imageLoaded;
-obstacleImages.forEach((obstacle) => {
+
+
+obstacleImages.forEach((obstacle) => {  //load obstacle images
   const img = new Image();
   img.src = obstacle.src;
   obstacle.image = img;
@@ -172,7 +178,7 @@ function createObstacle() {
 function checkCollision() {
   // Loop through each obstacle in the obstacles array
   for (let obstacle of obstacles) {
-    // Check if the bug's bounding box intersects with the obstacle's bounding box
+    // Checks if the bug's bounding box intersects with the obstacle's bounding box
     if (
       bug.x < obstacle.x + obstacle.width && // The left side of the bug is to the left of the right side of the obstacle
       bug.x + bug.width > obstacle.x && // The right side of the bug is to the right of the left side of the obstacle
@@ -234,7 +240,7 @@ function resetGame() {
   scoreUpdateCounter = 0;
   gameOver = false;
   obstacleSpeed = 5;
-  startBackgroundMusic(); // Start the music when the game resets
+  stopBackgroundMusic(); // Start the music when the game resets
   gameState = GAME_STATE_RUNNING;
 }
 
@@ -253,19 +259,70 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.fill();
 }
 
+// function drawStartPage() {
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+//     // Draw the background
+//     ctx.fillStyle = '#000000';
+//     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//     // Draw the title in graffiti style
+//     ctx.fillStyle = '#FF0000';
+//     ctx.font = '60px Arial';
+//     ctx.fillText('Bug on a Wire', canvas.width / 2 - 180, 200);
+    
+//     // Draw instructions
+//     ctx.fillStyle = '#FFFFFF';
+//     ctx.font = '20px Arial';
+//     ctx.fillText('Instructions:', canvas.width / 2 - 70, 280);
+//     ctx.fillText('Arrow Up - Move Up', canvas.width / 2 - 100, 320);
+//     ctx.fillText('Arrow Down - Move Down', canvas.width / 2 - 100, 360);
+//     ctx.fillText('Arrow Right - Jump', canvas.width / 2 - 100, 400);
+
+//     // Draw start button
+//     ctx.fillStyle = '#00FF00';
+//     ctx.fillRect(canvas.width / 2 - 50, 450, 100, 50);
+//     ctx.fillStyle = '#000000';
+//     ctx.font = '20px Arial';
+//     ctx.fillText('Start', canvas.width / 2 - 20, 480);
+
+//     // Draw "Press Enter to Start"
+//     ctx.fillStyle = '#FFFFFF';
+//     ctx.font = '20px Arial';
+//     ctx.fillText('Press Enter to Start', canvas.width / 2 - 90, 540);
+// }
+
 function drawStartMenu() {
-  ctx.fillStyle = "lightblue";
-  drawRoundedRect(
-    ctx,
-    canvasWidth / 4 - 14,
-    canvasHeight / 2 - 45,
-    340,
-    120,
-    20
-  );
-  ctx.fillStyle = "white";
-  ctx.font = "30px Arial";
-  ctx.fillText("Press Space to Start", canvasWidth / 4, canvasHeight / 2);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw the background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the title in graffiti style
+    ctx.fillStyle = '#FF0000';
+    ctx.font = '60px Arial';
+    ctx.fillText('Bug on a Wire', canvas.width / 2 - 180, 200);
+    
+    // Draw instructions
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '20px Arial';
+    ctx.fillText('Instructions:', canvas.width / 2 - 70, 280);
+    ctx.fillText('Arrow Up - JUMP', canvas.width / 2 - 100, 320);
+    ctx.fillText('Arrow Left - Shift Left', canvas.width / 2 - 100, 360);
+    ctx.fillText('Arrow Right - Shift Right', canvas.width / 2 - 100, 400);
+
+    // Draw start button
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(canvas.width / 2 - 50, 450, 100, 50);
+    ctx.fillStyle = '#000000';
+    ctx.font = '20px Arial bold';
+    ctx.fillText('Start', canvas.width / 2 - 20, 480);
+
+    // Draw "Press Enter to Start"
+    ctx.fillStyle = 'blue';
+    ctx.font = '20px Arial bold';
+    ctx.fillText('Press Space to Start', canvas.width / 2 - 90, 540);
 }
 
 function gameLoop() {
@@ -273,6 +330,7 @@ function gameLoop() {
 
   if (gameState === GAME_STATE_START) {
     drawStartMenu();
+
   } else if (gameState === GAME_STATE_RUNNING) {
     drawWires();
     drawBug();
@@ -281,7 +339,7 @@ function gameLoop() {
     checkCollision();
     updateScore();
     drawScore();
-
+startBackgroundMusic();
     if (score > 50) {
       drawLevelMessage();
     }

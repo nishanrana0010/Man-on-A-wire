@@ -106,7 +106,7 @@ function drawBug() {
     bugFrameWidth,
     bugFrameHeight, // Source width, height
     bug.x,
-    bug.y - bug.jumpHeight, // Destination x, y (adjusted for jump height)
+    bug.y - bug.jumpHeight, // Destination x, y (adjusted for jump height) //
     bug.width,
     bug.height // Destination width, height
   );
